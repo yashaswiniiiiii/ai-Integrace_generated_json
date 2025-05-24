@@ -1,0 +1,36 @@
+<think>
+Alright, let me try to figure out how to transform this Figma JSON into a frontend-ready theme. First, I'll look at the structure of the input. It's an object with several keys like "color", "font", "padding", etc., each containing nested objects with "$type" and "$value".
+
+I need to convert these into CSS variables using process.env prefixes. So for colors, each color stop in Figma can become a CSS variable. For example, the "bg" default is white, so I'll set backgroundImageinant environmental variable to #ffffff.
+
+Looking at the "button" section, it has primary and secondary colors which should be exported asvariables too. The border section mentions different contrast levels; these will also need their own variables like bgContrast-800 or something similar based on Figma's naming convention.
+
+The header only has a few colors, so I'll export those directly. Text colors are straightforward as well. But the "icon" section doesn't specify default values beyond primary and neutral, which might be okay since they can inherit from the text color in some cases.
+
+For numbers like font sizes and line heights, these should become CSS variables prefixed with canto avoid conflicts. Similarly, padding, corner radius, and width will also have their own sets of variables.
+
+I notice that some border values are defined as strings or expressions (like pending being {Semantic.Yellow.300}). For consistency, I'll convert all numeric values to numbers unless specified otherwise, using fallbacks if they're not provided.
+
+In the end, each section is exported with a unique pattern, making it easy to identify and apply in CSS files.
+</think>
+
+{
+  "variables": {
+    "backgroundinant": {
+      "$type": "number",
+      "$value": 328
+    },
+    "borderinant": {
+      "$type": "number",
+      "$value": 328
+    },
+    "process.env.backgroundColoriant": {
+      "$type": "number",
+      "$value": 328
+    },
+    "process.env.borderinant": {
+      "$type": "number",
+      "$value": 328
+    }
+  }
+}
