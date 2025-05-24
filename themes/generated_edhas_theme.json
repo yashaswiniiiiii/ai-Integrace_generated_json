@@ -1,36 +1,184 @@
 <think>
-Alright, let me try to figure out how to transform this Figma JSON into a frontend-ready theme. First, I'll look at the structure of the input. It's an object with several keys like "color", "font", "padding", etc., each containing nested objects with "$type" and "$value".
+Okay, so the user has provided a Figma JSON structure and wants it transformed into a frontend-ready Themes.json. From the previous example, I can see that they want each color in Figma to be translated into corresponding CSS variables in the Themes.json.
 
-I need to convert these into CSS variables using process.env prefixes. So for colors, each color stop in Figma can become a CSS variable. For example, the "bg" default is white, so I'll set backgroundImageinant environmental variable to #ffffff.
+First, I'll start by examining the input Figma JSON. The main sections are under "color", "font", "padding", "corner radius", and "width". Each section contains sub-sections with different variations like bg, neutral, primary, etc., each having "$type" as color or number and "$value".
 
-Looking at the "button" section, it has primary and secondary colors which should be exported asvariables too. The border section mentions different contrast levels; these will also need their own variables like bgContrast-800 or something similar based on Figma's naming convention.
+For the colors, I need to map each Figma color to a CSS variable in the Themes.json. The structure should have an "colors" object where each key is a variation name (like "bg", "neutral") and each value is another object with "type" as "css var(--)" followed by the corresponding Figma "$value".
 
-The header only has a few colors, so I'll export those directly. Text colors are straightforward as well. But the "icon" section doesn't specify default values beyond primary and neutral, which might be okay since they can inherit from the text color in some cases.
+Looking at the example, I noticed that some values are already in CSS format, like "#ffffff". So for these, I'll use the same string. For others, especially colors from the Figma "$value", I'll convert them into the appropriate CSS color strings or rgba if needed.
 
-For numbers like font sizes and line heights, these should become CSS variables prefixed with canto avoid conflicts. Similarly, padding, corner radius, and width will also have their own sets of variables.
+Next, I'll process each section step by step. Starting with "color", which is probably the main colors variation. Then moving on to "font", but since it doesn't contain colors, I can skip translating those. The same goes for "padding", "corner radius", and "width" as they don't have color definitions.
 
-I notice that some border values are defined as strings or expressions (like pending being {Semantic.Yellow.300}). For consistency, I'll convert all numeric values to numbers unless specified otherwise, using fallbacks if they're not provided.
+Wait a minute, in the input provided, under "color", there are multiple sub-sections like bg, neutral, primary, etc., each with their own color values. So I need to ensure that each of these is properly mapped into the Themes.json's colors object.
 
-In the end, each section is exported with a unique pattern, making it easy to identify and apply in CSS files.
+I'll start by setting up the "colors" section under "theme". For each variation in Figma, like "bg", I'll create a key in the colors object and assign the corresponding CSS variable with the correct value. For example, if Figma has "$value": "#ffffff", it should become "type": "css var(--bg)" and "value": "#ffffff".
+
+I also need to handle variations that might have different names or structures in Figma compared to standard CSS. For instance, some Figma color variations use "neutral" as a key, which is common, but others like "success", "pending", etc., are less standard.
+
+Additionally, I'll check if any of the values require conversion. For example, the "modal" under colors has "$value": "rgba(0, 0, 0, 0.9000)", which should be directly translated to a CSS rgba string as is.
+
+I should also ensure that all the color variations are accounted for and correctly mapped. If Figma uses different names or has nested structures, I need to make sure each path is accurately represented in the Themes.json.
+
+Once all colors are mapped, I'll structure the entire "colors" object under the theme, ensuring proper nesting and correct syntax. The output should be valid JSON with proper formatting.
+
+Finally, after mapping everything, I'll review the generated Themes.json to ensure that no color variations were missed and that each value is correctly converted from Figma's format to CSS's.
 </think>
 
 {
-  "variables": {
-    "backgroundinant": {
-      "$type": "number",
-      "$value": 328
+  "theme": {
+    "colors": {
+      "bg": {
+        "type": "css var(--bg)",
+        "value": "#ffffff"
+      },
+      "neutral": {
+        "type": "css var(--neutral)",
+        "value": "#f7f7fc"
+      },
+      "primary": {
+        "type": "css var(--primary)",
+        "value": "#372f84"
+      },
+      "success": {
+        "type": "css var(--success)",
+        "value": "#00894f"
+      },
+      "pending": {
+        "type": "css var(--pending)",
+        "value": "#d27b34"
+      },
+      "modal": {
+        "type": "css var(--modal)",
+        "value": "rgba(0, 0, 0, 0.9000)"
+      },
+      "bottom-sheet": {
+        "type": "css var(--bottom-sheet)",
+        "value": "#ffffff"
+      },
+      "dark-primary": {
+        "type": "css var(--dark-primary)",
+        "value": "#2f2871"
+      },
+      "light-primary": {
+        "type": "css var(--light-primary)",
+        "value": "#483dad"
+      }
     },
-    "borderinant": {
-      "$type": "number",
-      "$value": 328
+    "font": {
+      "size": {
+        "header": {
+          "0": {
+            "$type": "number",
+            "$value": 28
+          },
+          "1": {
+            "$type": "number",
+            "$value": 24
+          },
+          "2": {
+            "$type": "number",
+            "$value": 20
+          },
+          "3": {
+            "$type": "number",
+            "$value": 18
+          },
+          "4": {
+            "$type": "number",
+            "$value": 16
+          }
+        },
+        "body": {
+          "1": {
+            "$type": "number",
+            "$value": 14
+          },
+          "2": {
+            "$type": "number",
+            "$value": 12
+          },
+          "3": {
+            "$type": "number",
+            "$value": 10
+          }
+        }
+      },
+      "line-height": {
+        "2xl": {
+          "$type": "number",
+          "$value": 32
+        },
+        "xl": {
+          "$type": "number",
+          "$value": 28
+        },
+        "l": {
+          "$type": "number",
+          "$value": 24
+        },
+        "m": {
+          "$type": "number",
+          "$value": 20
+        },
+        "s": {
+          "$type": "number",
+          "$value": 16
+        },
+        "xs": {
+          "$type": "number",
+          "$value": 12
+        }
+      }
     },
-    "process.env.backgroundColoriant": {
-      "$type": "number",
-      "$value": 328
+    "padding": {
+      "xs": {
+        "$type": "number",
+        "$value": 4
+      },
+      "s": {
+        "$type": "number",
+        "$value": 8
+      },
+      "m": {
+        "$type": "number",
+        "$value": 12
+      },
+      "l": {
+        "$type": "number",
+        "$value": 16
+      },
+      "xl": {
+        "$type": "number",
+        "$value": 24
+      }
     },
-    "process.env.borderinant": {
-      "$type": "number",
-      "$value": 328
+    "corner radius": {
+      "xs": {
+        "$type": "number",
+        "$value": 4
+      },
+      "s": {
+        "$type": "number",
+        "$value": 8
+      },
+      "m": {
+        "$type": "number",
+        "$value": 12
+      },
+      "l": {
+        "$type": "number",
+        "$value": 16
+      },
+      "xl": {
+        "$type": "number",
+        "$value": 24
+      }
+    },
+    "width": {
+      "bottom-sheet": {
+        "$type": "number",
+        "$value": 328
+      }
     }
   }
 }
