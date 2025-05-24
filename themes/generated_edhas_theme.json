@@ -1,184 +1,333 @@
 <think>
-Okay, so the user has provided a Figma JSON structure and wants it transformed into a frontend-ready Themes.json. From the previous example, I can see that they want each color in Figma to be translated into corresponding CSS variables in the Themes.json.
+Okay, so I need to transform this Figma JSON into a frontend-ready theme.json. Hmm, where do I start? Let me look at the input first.
 
-First, I'll start by examining the input Figma JSON. The main sections are under "color", "font", "padding", "corner radius", and "width". Each section contains sub-sections with different variations like bg, neutral, primary, etc., each having "$type" as color or number and "$value".
+Alright, the input is an object with several keys like "color", "font", "padding", etc., each containing nested objects with "$type" and "$value". My goal is to convert these into a format suitable for a theme.json file used in web applications.
 
-For the colors, I need to map each Figma color to a CSS variable in the Themes.json. The structure should have an "colors" object where each key is a variation name (like "bg", "neutral") and each value is another object with "type" as "css var(--)" followed by the corresponding Figma "$value".
+First, I'll think about how theme.json is structured. It usually has sections under "colors", "fonts", "padding", and so on, each with different variants like base, primary, etc. Each variant specifies the color type and value.
 
-Looking at the example, I noticed that some values are already in CSS format, like "#ffffff". So for these, I'll use the same string. For others, especially colors from the Figma "$value", I'll convert them into the appropriate CSS color strings or rgba if needed.
+Starting with the "color" section. In Figma, there are bg, neutral, saturated, error, success, pending, modal, bottom-sheet, dark-primary, primary, light-primary. I need to map these to the corresponding keys in theme.json. For example, "bg" becomes "background", and so on.
 
-Next, I'll process each section step by step. Starting with "color", which is probably the main colors variation. Then moving on to "font", but since it doesn't contain colors, I can skip translating those. The same goes for "padding", "corner radius", and "width" as they don't have color definitions.
+Wait, some colors have sub-keys like "neutral" or "primary". In theme.json, these are usually under their respective sections with variants. So each color type should be an object within its main key.
 
-Wait a minute, in the input provided, under "color", there are multiple sub-sections like bg, neutral, primary, etc., each with their own color values. So I need to ensure that each of these is properly mapped into the Themes.json's colors object.
+Next is the "font" section. Figma's font has size properties. Each size like header and body needs to be converted into a font-size property in theme.json with the appropriate breakpoints.
 
-I'll start by setting up the "colors" section under "theme". For each variation in Figma, like "bg", I'll create a key in the colors object and assign the corresponding CSS variable with the correct value. For example, if Figma has "$value": "#ffffff", it should become "type": "css var(--bg)" and "value": "#ffffff".
+The line-height in Figma will translate to font-line-height in theme.json, maintaining similar breakpoints but ensuring they match correctly.
 
-I also need to handle variations that might have different names or structures in Figma compared to standard CSS. For instance, some Figma color variations use "neutral" as a key, which is common, but others like "success", "pending", etc., are less standard.
+Padding in Figma is straightforward: each nesting level (xs, s, etc.) becomes a padding variant like base, medium, etc., in theme.json. I need to make sure the values are consistent and correct.
 
-Additionally, I'll check if any of the values require conversion. For example, the "modal" under colors has "$value": "rgba(0, 0, 0, 0.9000)", which should be directly translated to a CSS rgba string as is.
+Corner radius also has multiple levels; in theme.json, these become corner-radius variants. Each size from xs up should be correctly mapped with the right value.
 
-I should also ensure that all the color variations are accounted for and correctly mapped. If Figma uses different names or has nested structures, I need to make sure each path is accurately represented in the Themes.json.
+For width, it's similar to padding but probably refers to the container width. So, bottom-sheet in Figma becomes width in theme.json, with the same nesting structure.
 
-Once all colors are mapped, I'll structure the entire "colors" object under the theme, ensuring proper nesting and correct syntax. The output should be valid JSON with proper formatting.
+I also need to ensure that all the nested objects are properly converted into their respective properties under "colors", "fonts", etc., and that each variant has the correct "$type" mapped as "number".
 
-Finally, after mapping everything, I'll review the generated Themes.json to ensure that no color variations were missed and that each value is correctly converted from Figma's format to CSS's.
+Wait, some of the color values might have special strings like "{Semantic.Yellow.300}" which is a variable. I should keep them as strings in theme.json to avoid issues.
+
+Let me check if there are any missing sections or variants. For example, the bottom-sheet has top and bottom properties; each nesting level (bottom-sheet-top and bottom-sheet-bottom) should be converted into padding with the same values but different keys like "padding-bottom-sheet-top" and "padding-bottom-sheet-bottom".
+
+Wait, in theme.json, I don't think those specific keys exist. Maybe it's better to group them under a general "padding-bottom-sheet" property that includes both top and bottom.
+
+Alternatively, perhaps each of these should be separate padding variants, but that might complicate things. Let me see the example given earlier; maybe they can be grouped together as sub-keys under main padding keys.
+
+Also, I need to ensure all numeric values are correctly converted from Figma's format (like 328) to match web standards where widths are often in em or rem units, but since theme.json uses pixel-based values, I'll keep them as numbers.
+
+I should also check if there are any typos or mismatches in the nesting structure. For example, corner radius has "bottom-sheet-top" and "bottom-sheet-bottom", which might be better handled under a single padding key with both top and bottom specified.
+
+Another thing: in theme.json, some sections use specific keys like "font-size" instead of just "size". So I'll rename the font properties accordingly to match standard names.
+
+Putting it all together, each color's type will have its own section in colors, each variant (bg, neutral, etc.) as separate objects. Fonts will be under fonts with size and line-height. Padding, corner radius, width will follow similar structures but might need their keys adjusted based on how they're used elsewhere.
+
+I think I've covered all the sections now. Let me try to write out the JSON structure step by step.
 </think>
 
 {
-  "theme": {
-    "colors": {
-      "bg": {
-        "type": "css var(--bg)",
+  "colors": {
+    "background": {
+      "default": {
+        "type": "color",
         "value": "#ffffff"
       },
       "neutral": {
-        "type": "css var(--neutral)",
+        "type": "color",
         "value": "#f7f7fc"
       },
-      "primary": {
-        "type": "css var(--primary)",
-        "value": "#372f84"
+      "saturated": {
+        "type": "color",
+        "value": "#ebe6fa"
+      },
+      "error": {
+        "type": "color",
+        "value": "#fff4f2"
       },
       "success": {
-        "type": "css var(--success)",
-        "value": "#00894f"
+        "type": "color",
+        "value": "#f0fdef"
       },
       "pending": {
-        "type": "css var(--pending)",
-        "value": "#d27b34"
+        "type": "color",
+        "value": "#fff7f3"
       },
       "modal": {
-        "type": "css var(--modal)",
-        "value": "rgba(0, 0, 0, 0.9000)"
+        "type": "color",
+        "value": "rgba(0, 0, 0, 0.9)"
       },
       "bottom-sheet": {
-        "type": "css var(--bottom-sheet)",
+        "type": "color",
         "value": "#ffffff"
       },
       "dark-primary": {
-        "type": "css var(--dark-primary)",
+        "type": "color",
         "value": "#2f2871"
       },
+      "primary": {
+        "type": "color",
+        "value": "#372f84"
+      },
       "light-primary": {
-        "type": "css var(--light-primary)",
+        "type": "color",
         "value": "#483dad"
       }
     },
-    "font": {
-      "size": {
-        "header": {
-          "0": {
-            "$type": "number",
-            "$value": 28
-          },
-          "1": {
-            "$type": "number",
-            "$value": 24
-          },
-          "2": {
-            "$type": "number",
-            "$value": 20
-          },
-          "3": {
-            "$type": "number",
-            "$value": 18
-          },
-          "4": {
-            "$type": "number",
-            "$value": 16
-          }
+    "header": {
+      "neutral": {
+        "type": "color",
+        "value": "#413f50"
+      },
+      "primary": {
+        "type": "color",
+        "value": "#372f84"
+      }
+    },
+    "button": {
+      "primary": {
+        "type": "color",
+        "value": "#372f84"
+      },
+      "secondary": {
+        "type": "color",
+        "value": "#ebe6fa"
+      },
+      "neutral": {
+        "type": "color",
+        "value": "#ffffff"
+      },
+      "disabled": {
+        "type": "color",
+        "value": "#dddde4"
+      }
+    },
+    "border": {
+      "low-contrast": {
+        "type": "color",
+        "value": "#eeeef1"
+      },
+      "medium-contrast": {
+        "type": "color",
+        "value": "#dddde4"
+      },
+      "high-contrast": {
+        "type": "color",
+        "value": "#8c85d4"
+      },
+      "success": {
+        "type": "color",
+        "value": "#73fcab"
+      },
+      "pending": {
+        "type": "color",
+        "value": "{Semantic.Yellow.300}"
+      },
+      "failure": {
+        "type": "color",
+        "value": "#ffb4aa"
+      }
+    },
+    "text": {
+      "primary": {
+        "type": "color",
+        "value": "#372f84"
+      },
+      "neutral": {
+        "type": "color",
+        "value": "#413f50"
+      },
+      "support": {
+        "type": "color",
+        "value": "#84819c"
+      },
+      "success": {
+        "type": "color",
+        "value": "#00894f"
+      },
+      "pending": {
+        "type": "color",
+        "value": "#d27b34"
+      },
+      "error": {
+        "type": "color",
+        "value": "#de372d"
+      },
+      "muted": {
+        "type": "color",
+        "value": "#bcbac9"
+      },
+      "contrast": {
+        "type": "color",
+        "value": "#ffffff"
+      }
+    }
+  },
+  "fonts": {
+    "font-size": {
+      "headers": {
+        "12": {
+          "number": 28
         },
-        "body": {
-          "1": {
-            "$type": "number",
-            "$value": 14
-          },
-          "2": {
-            "$type": "number",
-            "$value": 12
-          },
-          "3": {
-            "$type": "number",
-            "$value": 10
-          }
+        "16": {
+          "number": 24
+        },
+        "20": {
+          "number": 20
         }
       },
-      "line-height": {
-        "2xl": {
-          "$type": "number",
-          "$value": 32
+      "body": {
+        "12": {
+          "number": 14
+        },
+        "16": {
+          "number": 12
+        }
+      }
+    },
+    "line-height": {
+      "32px": {
+        "number": 32
+      },
+      "28px": {
+        "number": 28
+      },
+      "24px": {
+        "number": 24
+      },
+      "20px": {
+        "number": 20
+      },
+      "16px": {
+        "number": 16
+      },
+      "12px": {
+        "number": 12
+      }
+    }
+  },
+  "padding": {
+    "base": {
+      "extra": {
+        "number": 4
+      },
+      "medium": {
+        "number": 8
+      },
+      "large": {
+        "number": 12
+      },
+      "xl": {
+        "number": 16
+      }
+    },
+    "muted-padding": {
+      "extra": {
+        "number": 4
+      },
+      "medium": {
+        "number": 8
+      },
+      "large": {
+        "number": 12
+      },
+      "xl": {
+        "number": 16
+      }
+    },
+    "dark-padding": {
+      "extra": {
+        "number": 4
+      },
+      "medium": {
+        "number": 8
+      },
+      "large": {
+        "number": 12
+      },
+      "xl": {
+        "number": 16
+      }
+    },
+    "neutral-padding": {
+      "extra": {
+        "number": 4
+      },
+      "medium": {
+        "number": 8
+      },
+      "large": {
+        "number": 12
+      },
+      "xl": {
+        "number": 16
+      }
+    },
+    "light-padding": {
+      "extra": {
+        "number": 4
+      },
+      "medium": {
+        "number": 8
+      },
+      "large": {
+        "number": 12
+      },
+      "xl": {
+        "number": 16
+      }
+    },
+    "spacing": {
+      "bottom-sheet": {
+        "extra": {
+          "number": 4
+        },
+        "medium": {
+          "number": 8
+        },
+        "large": {
+          "number": 12
         },
         "xl": {
-          "$type": "number",
-          "$value": 28
-        },
-        "l": {
-          "$type": "number",
-          "$value": 24
-        },
-        "m": {
-          "$type": "number",
-          "$value": 20
-        },
-        "s": {
-          "$type": "number",
-          "$value": 16
-        },
-        "xs": {
-          "$type": "number",
-          "$value": 12
+          "number": 16
         }
       }
+    }
+  },
+  "corner-radius": {
+    "xs": {
+      "number": 4
     },
-    "padding": {
-      "xs": {
-        "$type": "number",
-        "$value": 4
-      },
-      "s": {
-        "$type": "number",
-        "$value": 8
-      },
-      "m": {
-        "$type": "number",
-        "$value": 12
-      },
-      "l": {
-        "$type": "number",
-        "$value": 16
-      },
-      "xl": {
-        "$type": "number",
-        "$value": 24
-      }
+    "s": {
+      "number": 8
     },
-    "corner radius": {
-      "xs": {
-        "$type": "number",
-        "$value": 4
-      },
-      "s": {
-        "$type": "number",
-        "$value": 8
-      },
-      "m": {
-        "$type": "number",
-        "$value": 12
-      },
-      "l": {
-        "$type": "number",
-        "$value": 16
-      },
-      "xl": {
-        "$type": "number",
-        "$value": 24
-      }
+    "m": {
+      "number": 12
     },
-    "width": {
-      "bottom-sheet": {
-        "$type": "number",
-        "$value": 328
-      }
+    "l": {
+      "number": 16
+    },
+    "xl": {
+      "number": 24
+    }
+  },
+  "width": {
+    "bottom-sheet": {
+      "number": 328
     }
   }
 }
