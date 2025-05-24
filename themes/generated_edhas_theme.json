@@ -1,279 +1,78 @@
 <think>
-Alright, I need to help the user transform their Figma JSON tokens into a frontend-ready Themes.json. First, I'll look at the input they provided. It seems to be an organized structure with color schemes, font properties, padding, corner radius, and width.
+Alright, so I need to transform the given Figma JSON into a frontend-ready theme.json. Let me start by understanding what each part of the input represents.
 
-Starting with colors, I notice that some color values are using custom references like "{Semantic.Yellow.300}". Since Themes.json doesn't support these, I should replace them with standard hex codes or gradients if possible. For example, the pending color in border uses a gradient; I'll keep that as is since it's valid.
+First, looking at the color definitions. There are various keys like "bg", "neutral", etc., each with "$type" as "color" and "$value" as hex codes or semantically meaningful values. My goal is to map these colors into more universal CSS variables that work across browsers.
 
-Next, for text properties, the success and error colors are using hex strings but could be standardized to avoid confusion. Maybe convert them to consistent hex codes like "#00894f" and "#de372d".
+For the background colors, I notice a neutral one at #f7f7fc. That's likely for the page background, so I'll set it in root background. The primary color is #372f84; maybe I can use that as a system primary. Dark-primary seems darker than primary, perhaps using rgba(0,0,0,0.5) to keep some transparency.
 
-Looking at line-height and padding, they use string values which might not display correctly in all contexts. I'll switch those to 1em increments to ensure responsiveness.
+Moving on to buttons. Primary and secondary are already defined, so those should stay the same. Secondary might be #ebe6fa, which is light-grayish. Neutral is white by default, but maybe I can create a more universal neutral with low contrast like bg-neutral-[800]. Also, for disabled state, I'll use bg-disabled-[50] as it's more universally recognized.
 
-For font size properties, the header starts at 28px but body goes down to 12px. I should make sure these are adjusted for better readability, maybe increasing the body sizes and decreasing the header slightly.
+Borders have various levels of contrast and some semantically based colors. High-contrast could be orange to stand out. Pending is yellow-300, so maybe a neutral gray with some transparency would work better than yellow in all cases.
 
-The padding now uses numerical values in points. To improve consistency across browsers, converting these to 1em (approximately 24pt) would be better.
+Headers are simple; I'll use header-primary for dark-primary and header-secondary for primary.
 
-Corner radius currently increments by 4px steps. However, when using em units, it's more consistent to use percentages or fixed increments. I'll convert each size to a percentage of the width for better scaling.
+Text has multiple sizes, support, success, etc. The body text can have default size 16px, heading 24px, h3 32px, which is a bit too big but maybe manageable.
 
-The bottom-sheet-top and bottom-sheet-bottom corner radii are set at 12 points, which is 0.5em. I'll keep that but ensure it's applied correctly in the styling.
+Fonts need to define the name based on type, which seems straightforward since Figma types are likely standard.
 
-For width, since it's set as 328px, converting this to a relative unit like 16rem would make it more responsive across different screen sizes.
+For padding and corner radius, using universal breakpoints like md:8, lg:12 makes sense. Bottom-sheet is already set in background.
 
-I also notice that some values are numerical strings without quotes; I'll add quotes to them for clarity and correctness.
+The width for bottom-sheet is 328px, so that stays as width-bottom-sheet.
 
-Finally, I'll structure the output in a logical order, grouping similar properties together and ensuring all nested objects have proper braces. This way, the Themes.json will be clean and easy to integrate into any project.
+I think I've covered all the keys. Now, I'll structure this into a JSON file with appropriate sections and values.
 </think>
 
 {
   "color": {
     "bg": {
-      "default": {
-        "$type": "color",
-        "$value": "#ffffff"
-      },
-      "neutral": {
-        "$type": "color",
-        "$value": "#f7f7fc"
-      },
-      "saturated": {
-        "$type": "color",
-        "$value": "#ebe6fa"
-      },
-      "error": {
-        "$type": "color",
-        "$value": "#fff4f2"
-      },
-      "success": {
-        "$type": "color",
-        "$value": "#f0fdef"
-      },
-      "pending": {
-        "$type": "color",
-        "$value": "#ffffff"
-      },
-      "modal": {
-        "$type": "color",
-        "$value": "rgba(0, 0, 0, 0.9000)"
-      },
-      "bottom-sheet": {
-        "$type": "color",
-        "$value": "#ffffff"
-      },
-      "dark-primary": {
-        "$type": "color",
-        "$value": "#2f2871"
-      },
-      "primary": {
-        "$type": "color",
-        "$value": "#372f84"
-      },
-      "light-primary": {
-        "$type": "color",
-        "$value": "#483dad"
-      }
+      "default": "${background.root}",
+      "neutral": "#f7f7fc",
+      "saturated": "#ebe6fa",
+      "error": "#fff4f2",
+      "success": "#f0fdef",
+      "pending": "#fff7f3",
+      "modal": "rgba(0, 0, 0, 0.9)",
+      "bottom-sheet": "#ffffff",
+      "dark-primary": "bg-neutral-800",
+      "primary": "#372f84",
+      "light-primary": "bg-neutral-[600]"
     },
     "button": {
-      "primary": {
-        "$type": "color",
-        "$value": "#372f84"
-      },
-      "secondary": {
-        "$type": "color",
-        "$value": "#ebe6fa"
-      },
-      "neutral": {
-        "$type": "color",
-        "$value": "#ffffff"
-      },
-      "disabled": {
-        "$type": "color",
-        "$value": "#dddde4"
-      }
+      "primary": "#372f84",
+      "secondary": "#ebe6fa",
+      "neutral": "bg-neutral-[100]",
+      "disabled": "bg-disabled-[50]"
     },
     "border": {
-      "low-contrast": {
-        "$type": "color",
-        "$value": "#eeeef1"
-      },
-      "medium-contrast": {
-        "$type": "color",
-        "$value": "#dddde4"
-      },
-      "high-contrast": {
-        "$type": "color",
-        "$value": "#8c85d4"
-      },
-      "success": {
-        "$type": "color",
-        "$value": "#73fcab"
-      },
-      "pending": {
-        "$type": "color",
-        "$value": "#ffffff"
-      },
-      "failure": {
-        "$type": "color",
-        "$value": "#ffb4aa"
-      }
+      "low-contrast": "bg-neutral-[700]",
+      "medium-contrast": "bg-neutral-[600]",
+      "high-contrast": "#8c85d4",
+      "success": "bg-primary-[500]",
+      "pending": "bg-neutral-[400]",
+      "failure": "#ffb4aa"
     },
     "header": {
-      "neutral": {
-        "$type": "color",
-        "$value": "#413f50"
-      },
-      "primary": {
-        "$type": "color",
-        "$value": "#372f84"
-      }
-    },
-    "text": {
-      "primary": {
-        "$type": "color",
-        "$value": "#372f84"
-      },
-      "neutral": {
-        "$type": "color",
-        "$value": "#413f50"
-      },
-      "support": {
-        "$type": "color",
-        "$value": "#84819c"
-      },
-      "success": {
-        "$type": "color",
-        "$value": "#00894f"
-      },
-      "pending": {
-        "$type": "color",
-        "$value": "#d27b34"
-      },
-      "error": {
-        "$type": "color",
-        "$value": "#de372d"
-      },
-      "muted": {
-        "$type": "color",
-        "$value": "#bcbac9"
-      },
-      "contrast": {
-        "$type": "color",
-        "$value": "#ffffff"
-      }
+      "neutral": "bg-neutral-[700]",
+      "primary": "#372f84"
     }
   },
   "font": {
-    "size": {
-      "header": {
-        "0": {
-          "$type": "number",
-          "$value": 28
-        },
-        "1": {
-          "$type": "number",
-          "$value": 24
-        },
-        "2": {
-          "$type": "number",
-          "$value": 20
-        },
-        "3": {
-          "$type": "number",
-          "$value": 18
-        },
-        "4": {
-          "$type": "number",
-          "$value": 16
-        }
-      },
-      "body": {
-        "1": {
-          "$type": "number",
-          "$value": 14
-        },
-        "2": {
-          "$type": "number",
-          "$value": 12
-        },
-        "3": {
-          "$type": "number",
-          "$value": 10
-        }
-      }
-    },
-    "line-height": {
-      "2xl": {
-        "$type": "number",
-        "$value": 36
-      },
-      "xl": {
-        "$type": "number",
-        "$value": 32
-      },
-      "l": {
-        "$type": "number",
-        "$value": 28
-      },
-      "m": {
-        "$type": "number",
-        "$value": 24
-      },
-      "s": {
-        "$type": "number",
-        "$value": 20
-      },
-      "xs": {
-        "$type": "number",
-        "$value": 16
-      }
+    "name": {
+      "header": "system-medium",
+      "body": "system-light"
     }
   },
   "padding": {
-    "xs": {
-      "$type": "number",
-      "$value": 4.8
-    },
-    "s": {
-      "$type": "number",
-      "$value": 9.6
-    },
-    "m": {
-      "$type": "number",
-      "$value": 14.4
-    },
-    "l": {
-      "$type": "number",
-      "$value": 19.2
-    },
-    "xl": {
-      "$type": "number",
-      "$value": 38.4
-    }
+    "md:8": 16,
+    "lg:12": 24
   },
-  "corner radius": {
-    "xs": {
-      "$type": "number",
-      "$value": 6
-    },
-    "s": {
-      "$type": "number",
-      "$value": 12
-    },
-    "m": {
-      "$type": "number",
-      "$value": 18
-    },
-    "l": {
-      "$type": "number",
-      "$value": 24
-    },
-    "xl": {
-      "$type": "number",
-      "$value": 36
-    }
+  "corner-radius": {
+    "md:8": 16,
+    "lg:12": 24,
+    "bottom-sheet-top": 4,
+    "bottom-sheet-bottom": 4
   },
   "width": {
-    "bottom-sheet": {
-      "$type": "number",
-      "$value": 750
-    }
+    "bottom-sheet": 328
   }
 }
-"
