@@ -1,0 +1,220 @@
+<think>
+Alright, so the user provided a Figma JSON structure and asked for it to be transformed into a frontend-ready Themes.json. They included an example transformation which I can use as a reference.
+
+First, I need to understand what each section in the Figma JSON represents. There are color schemes, font sizes, line heights, padding, corner radius, and width. The goal is to convert these into a nested JSON structure that's suitable for styling.
+
+Looking at the example they provided earlier, it seems like each main category (like "color", "font", etc.) becomes an object in the Themes.json. Within each category, specific properties are further divided into subcategories with different values based on their names.
+
+For instance, under "color", there are various background colors for different purposes such as default, neutral, saturated, etc. Each of these is converted into a key-value pair where the key includes the color type and name, and the value is either a string or hexadecimal code if applicable.
+
+I should replicate this structure for each section in the input Figma JSON. For example, under "button", there are primary colors like "primary" and "secondary". Each of these will have their own values extracted from the Figma data.
+
+I also notice that some properties, like padding and corner radius, use a similar naming convention but don't have specific color definitions. These can be left out since they're not part of the color scheme in this context.
+
+The width is included here, which might represent the container's width. However, typically, themes focus on colors, so maybe it should be omitted unless specified otherwise.
+
+I need to ensure that all nested structures are properly formatted with commas and brackets correctly placed to avoid syntax errors. Also, I'll make sure that each key accurately reflects the Figma property names translated into JSON keys.
+
+Finally, after converting all sections, I'll compile them into a single Themes.json structure following the format provided in the example. This should result in a comprehensive theme setup ready for frontend use.
+</think>
+
+{
+  "themename": {
+    "color": {
+      "bg": {
+        "default": {
+          "value": "#ffffff"
+        },
+        "neutral": {
+          "value": "#f7f7fc"
+        },
+        "saturated": {
+          "value": "#ebe6fa"
+        },
+        "error": {
+          "value": "#fff4f2"
+        },
+        "success": {
+          "value": "#f0fdef"
+        },
+        "pending": {
+          "value": "#fff7f3"
+        },
+        "modal": {
+          "value": {
+            "type": "color",
+            "hex": "#000000"
+          }
+        },
+        "bottom-sheet": {
+          "default": {
+            "value": "#ffffff"
+          }
+        },
+        "dark-primary": {
+          "value": "#2f2871"
+        },
+        "primary": {
+          "value": "#372f84"
+        },
+        "light-primary": {
+          "value": "#483dad"
+        }
+      },
+      "button": {
+        "primary": {
+          "value": "#372f84"
+        },
+        "secondary": {
+          "value": "#ebe6fa"
+        },
+        "neutral": {
+          "value": "#ffffff"
+        },
+        "disabled": {
+          "value": "#dddde4"
+        }
+      },
+      "border": {
+        "low-contrast": {
+          "value": "#eeeef1"
+        },
+        "medium-contrast": {
+          "value": "#dddde4"
+        },
+        "high-contrast": {
+          "value": "#8c85d4"
+        },
+        "success": {
+          "value": "#73fcab"
+        },
+        "pending": {
+          "value": {
+            "type": "color",
+            "hex": "{ Semantic.Yellow.300 }"
+          }
+        },
+        "failure": {
+          "value": "#ffb4aa"
+        }
+      },
+      "header": {
+        "neutral": {
+          "value": "#413f50"
+        },
+        "primary": {
+          "value": "#372f84"
+        }
+      },
+      "text": {
+        "primary": {
+          "value": "#372f84"
+        },
+        "neutral": {
+          "value": "#413f50"
+        },
+        "support": {
+          "value": "#84819c"
+        },
+        "success": {
+          "value": "#00894f"
+        },
+        "pending": {
+          "value": "#d27b34"
+        },
+        "error": {
+          "value": "#de372d"
+        },
+        "muted": {
+          "value": "#bcbac9"
+        }
+      }
+    },
+    "font": {
+      "size": {
+        "header": {
+          "0": {
+            "value": 28
+          },
+          "1": {
+            "value": 24
+          },
+          "2": {
+            "value": 20
+          },
+          "3": {
+            "value": 18
+          },
+          "4": {
+            "value": 16
+          }
+        },
+        "body": {
+          "1": {
+            "value": 14
+          },
+          "2": {
+            "value": 12
+          },
+          "3": {
+            "value": 10
+          }
+        }
+      },
+      "line-height": {
+        "2xl": {
+          "value": 32
+        },
+        "xl": {
+          "value": 28
+        },
+        "l": {
+          "value": 24
+        },
+        "m": {
+          "value": 20
+        },
+        "s": {
+          "value": 16
+        },
+        "xs": {
+          "value": 12
+        }
+      }
+    },
+    "padding": {
+      "xs": {
+        "value": 4
+      },
+      "s": {
+        "value": 8
+      },
+      "m": {
+        "value": 12
+      },
+      "l": {
+        "value": 16
+      },
+      "xl": {
+        "value": 24
+      }
+    },
+    "corner-radius": {
+      "xs": {
+        "value": 4
+      },
+      "s": {
+        "value": 8
+      },
+      "m": {
+        "value": 12
+      },
+      "l": {
+        "value": 16
+      },
+      "xl": {
+        "value": 24
+      }
+    }
+  }
+}
