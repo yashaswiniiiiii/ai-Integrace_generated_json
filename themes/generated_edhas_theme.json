@@ -1,201 +1,179 @@
 <think>
-Okay, I need to transform the given Figma JSON tokens into a frontend-ready Themes.json. Let me start by understanding what each section in the input represents.
+Okay, so the user has provided a Figma JSON structure and wants it transformed into a frontend-ready themes.json. They included an example transformation in their message, which is helpful because I can use that as a reference to understand what they're expecting.
 
-First, looking at the color section. Figma has various color definitions like bg, neutral, saturated, etc. I should convert these into standard CSS colors or hex codes as per common design practices. For example, "bg" usually stays white, so "#ffffff". "neutral" might be a light gray, which is often "#f7f7fc". The other colors can be converted to their respective hex equivalents.
+First, I need to analyze the input data. It's structured with sections for color, font, padding, corner radius, and width. Each section has different variants like "default," "neutral," "primary," etc., along with properties such as "bg," "text," "line-height," etc.
 
-Next, the button section in Figma has primary, secondary, neutral, and disabled states. I'll map each of these to standard button classes like 'primary', 'secondary', etc., using appropriate hex codes or utility-based values if applicable.
+Looking at the example they gave earlier, it seems that the transformation involves creating objects in themes.json with keys for each main category (Color, Typography, etc.). Within each main category, there are subcategories like BG, TEXT, etc., and further properties under each. 
 
-Moving on to border styles. Figma's border types include low-contrast, medium-contrast, high-contrast, success, pending, and failure. These can be translated into gradient borders for better visual appeal. For instance, high-contrast could use a dark gray over light gray, while success might have a yellow gradient.
+I should start by identifying all the main categories from the Figma JSON: color, font, padding, corner-radius, and width. Each of these will become a section in the themes.json.
 
-For the header section, Figma's primary is usually a darker shade than the body. I'll define 'header' as a slightly darker color, perhaps using rgba with some transparency if needed.
+For each main category, I'll create an object with keys corresponding to subcategories. For example, under "Color," there are BG, TEXT, etc., so each becomes its own key within the main Color object.
 
-The text styling includes primary, neutral, support, and others like success, pending, error, muted, etc. These should be mapped to readable font weights or colors depending on their role in the design.
+Next, for each property under these categories, like "bg.default.value" being "#ffffff," I'll map it into the themes.json structure. This involves checking if a value is an object (like color values that reference other colors) or a number and handling them appropriately.
 
-In the icon section, I'll assign appropriate classes based on the icon's importance—primary for main icons, neutral for supporting ones, and success for highlights.
+I also notice that some properties are defined with "$type": "number," which in Figma means they're numeric values without units, so they can be directly converted to numbers in themes.json. For colors, since they might reference other layers or custom colors, I'll represent them as strings prefixed with a hash tag like "#value."
 
-Looking at the font size and line-height sections, Figma's values need to be converted into standard CSS units. For example, header 0 might correspond to 28px in text, so I'll use 'text-3xl' since it's a common breakpoint around that size.
+I should also ensure that all nested properties are properly structured within the JSON. For example, the "font" section includes line-height and size with sub-values for different sizes (like 2xl), which will need to be represented correctly in the themes.json.
 
-The padding section maps straightforwardly from Figma points to Prettier breakpoints like sm, lg, etc. So, each value will be replaced with the appropriate utility class.
+Another thing to watch out for is ensuring consistency in naming conventions. The Figma structure uses camelCase and specific prefixes like "bg," "text," etc., while the example transformation uses all lowercase keys, so I'll follow that pattern.
 
-Corner radius is handled by converting the values into predefined classes such as 'sm', 'lg', etc., based on standard sizing.
+I also need to make sure that any special cases, like the "bottom-sheet" sections under padding and width, are included correctly without missing them in the output. 
 
-For width definitions, since it's specific to a bottom-sheet, I'll use the term 'bottom-sheet' in the corresponding breakpoints like xl and 2xl.
-
-I need to ensure that all custom properties are correctly mapped without any typos. Also, checking if any values might need adjustment for better readability or consistency across different screen sizes.
-
-Finally, after mapping each section, I'll compile them into a Themes.json structure, making sure the syntax is correct with proper commas and braces.
+Finally, after mapping everything, I'll review the transformed JSON to ensure there are no syntax errors and that all necessary properties are included.
 </think>
 
+Here's the transformation of the Figma JSON into a frontend-ready themes.json:
+
+```json
 {
   "color": {
     "bg": {
-      "default": "#ffffff",
-      "neutral": "#f7f7fc"
+      "default": {
+        "value": "#ffffff"
+      },
+      "neutral": {
+        "value": "#f7f7fc"
+      },
+      "saturated": {
+        "value": "#ebe6fa"
+      },
+      "error": {
+        "value": "#fff4f2"
+      },
+      "success": {
+        "value": "#f0fdef"
+      },
+      "pending": {
+        "value": "#fff7f3"
+      },
+      "modal": {
+        "value": "#001a32"
+      },
+      "bottom-sheet": {
+        "default": {
+          "value": "#ffffff"
+        }
+      }
     },
-    "primary": {
-      "default": "#372f84",
-      "neutral": "#413f50"
-    },
-    "secondary": {
-      "default": "#ebe6fa"
-    },
-    "neutral": {
-      "default": "#413f50"
-    },
-    "success": {
-      "default": "#00894f",
-      "neutral": "#12b76a"
-    },
-    "pending": {
-      "default": "#d27b34"
-    },
-    "error": {
-      "default": "#de372d"
-    },
-    "muted": {
-      "default": "#bcbac9"
-    },
-    "contrast": {
-      "default": "#ffffff",
-      "neutral": "#f1f5f9"
-    }
-  },
-  "button": {
-    "primary": {
-      "default": "#372f84",
-      "neutral": "#413f50"
-    },
-    "secondary": {
-      "default": "#ebe6fa"
-    },
-    "neutral": {
-      "default": "#ffffff"
-    },
-    "disabled": {
-      "default": "#dddde4"
-    }
-  },
-  "border": {
-    "low-contrast": {
-      "default": "{Standard Gaming Monitor.200}",
-      "neutral": "#eeeef1"
-    },
-    "medium-contrast": {
-      "default": "{Standard Gaming Monitor.200}",
-      "neutral": "#dddde4"
-    },
-    "high-contrast": {
-      "default": "{Standard Gaming Monitor.200}",
-      "neutral": "#8c85d4"
-    },
-    "success": {
-      "default": "#73fcab",
-      "neutral": "#12b76a"
-    },
-    "pending": {
-      "default": "{Standard Gaming Monitor.200}"
-    },
-    "failure": {
-      "default": "#ffb4aa"
-    }
-  },
-  "header": {
-    "header": {
-      "sm": "#413f50",
-      "md": "#ffffff"
-    }
-  },
-  "text": {
-    "primary": {
-      "default": "#372f84",
-      "neutral": "#413f50"
-    },
-    "neutral": {
-      "default": "#413f50"
-    },
-    "support": {
-      "default": "#84819c"
-    },
-    "success": {
-      "default": "#00894f",
-      "md": "#12b76a"
-    },
-    "pending": {
-      "default": "#d27b34"
-    },
-    "error": {
-      "default": "#de372d"
-    },
-    "muted": {
-      "default": "#bcbac9"
-    },
-    "contrast": {
-      "default": "#ffffff",
-      "md": "#f1f5f9"
-    }
-  },
-  "icon": {
-    "primary": {
-      "default": "#372f84",
-      "neutral": "#413f50"
-    },
-    "neutral": {
-      "default": "#413f50"
-    },
-    "contrast": {
-      "default": "#ffffff"
-    },
-    "success": {
-      "default": "#12b76a"
-    },
-    "pending": {
-      "default": "#f2954b"
-    },
-    "error": {
-      "default": "#ff5446"
+    "text": {
+      "primary": {
+        "value": "#372f84"
+      },
+      "neutral": {
+        "value": "#413f50"
+      },
+      "support": {
+        "value": "#84819c"
+      },
+      "success": {
+        "value": "#00894f"
+      },
+      "pending": {
+        "value": "#d27b34"
+      },
+      "error": {
+        "value": "#de372d"
+      },
+      "muted": {
+        "value": "#bcbac9"
+      },
+      "contrast": {
+        "default": {
+          "value": "#ffffff"
+        }
+      }
     }
   },
   "font": {
     "size": {
       "header": {
-        "sm": 1,
-        "md": 0.7
+        "0": {
+          "value": 28
+        },
+        "1": {
+          "value": 24
+        },
+        "2": {
+          "value": 20
+        },
+        "3": {
+          "value": 18
+        },
+        "4": {
+          "value": 16
+        }
       },
       "body": {
-        "sm": 0.35,
-        "md": 0.6
+        "1": {
+          "value": 14
+        },
+        "2": {
+          "value": 12
+        },
+        "3": {
+          "value": 10
+        }
       }
     },
     "line-height": {
-      "2xl": 4.8,
-      "xl": 3.8,
-      "l": 3.175,
-      "m": 2.75,
-      "s": 2.275,
-      "xs": 1.6
+      "2xl": {
+        "value": 32
+      },
+      "xl": {
+        "value": 28
+      },
+      "l": {
+        "value": 24
+      },
+      "m": {
+        "value": 20
+      },
+      "s": {
+        "value": 16
+      },
+      "xs": {
+        "value": 12
+      }
     }
   },
   "padding": {
-    "sm": 4,
-    "lg": 8,
-    "md": 10.3,
-    "xl": 16,
-    "2xl": 24
+    "xs": {
+      "value": 4
+    },
+    "s": {
+      "value": 8
+    },
+    "m": {
+      "value": 12
+    },
+    "l": {
+      "value": 16
+    },
+    "xl": {
+      "value": 24
+    }
   },
-  "corner radius": {
-    "sm": 4,
-    "lg": 8,
-    "md": 12,
-    "xl": 16,
-    "2xl": 24,
-    "bottom-sheet-top": 12,
-    "bottom-sheet-bottom": 12
+  "corner-radius": {
+    "xs": {
+      "value": 4
+    },
+    "s": {
+      "value": 8
+    },
+    "m": {
+      "value": 12
+    },
+    "l": {
+      "value": 16
+    },
+    "xl": {
+      "value": 24
+    }
   },
   "width": {
     "bottom-sheet": {
-      "xl": 328,
-      "2xl": 400
+      "value": 328
     }
   }
 }
-`
+```
