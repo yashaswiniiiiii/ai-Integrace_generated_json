@@ -1,78 +1,201 @@
 <think>
-Alright, so I need to transform the given Figma JSON into a frontend-ready theme.json. Let me start by understanding what each part of the input represents.
+Okay, I need to transform the given Figma JSON tokens into a frontend-ready Themes.json. Let me start by understanding what each section in the input represents.
 
-First, looking at the color definitions. There are various keys like "bg", "neutral", etc., each with "$type" as "color" and "$value" as hex codes or semantically meaningful values. My goal is to map these colors into more universal CSS variables that work across browsers.
+First, looking at the color section. Figma has various color definitions like bg, neutral, saturated, etc. I should convert these into standard CSS colors or hex codes as per common design practices. For example, "bg" usually stays white, so "#ffffff". "neutral" might be a light gray, which is often "#f7f7fc". The other colors can be converted to their respective hex equivalents.
 
-For the background colors, I notice a neutral one at #f7f7fc. That's likely for the page background, so I'll set it in root background. The primary color is #372f84; maybe I can use that as a system primary. Dark-primary seems darker than primary, perhaps using rgba(0,0,0,0.5) to keep some transparency.
+Next, the button section in Figma has primary, secondary, neutral, and disabled states. I'll map each of these to standard button classes like 'primary', 'secondary', etc., using appropriate hex codes or utility-based values if applicable.
 
-Moving on to buttons. Primary and secondary are already defined, so those should stay the same. Secondary might be #ebe6fa, which is light-grayish. Neutral is white by default, but maybe I can create a more universal neutral with low contrast like bg-neutral-[800]. Also, for disabled state, I'll use bg-disabled-[50] as it's more universally recognized.
+Moving on to border styles. Figma's border types include low-contrast, medium-contrast, high-contrast, success, pending, and failure. These can be translated into gradient borders for better visual appeal. For instance, high-contrast could use a dark gray over light gray, while success might have a yellow gradient.
 
-Borders have various levels of contrast and some semantically based colors. High-contrast could be orange to stand out. Pending is yellow-300, so maybe a neutral gray with some transparency would work better than yellow in all cases.
+For the header section, Figma's primary is usually a darker shade than the body. I'll define 'header' as a slightly darker color, perhaps using rgba with some transparency if needed.
 
-Headers are simple; I'll use header-primary for dark-primary and header-secondary for primary.
+The text styling includes primary, neutral, support, and others like success, pending, error, muted, etc. These should be mapped to readable font weights or colors depending on their role in the design.
 
-Text has multiple sizes, support, success, etc. The body text can have default size 16px, heading 24px, h3 32px, which is a bit too big but maybe manageable.
+In the icon section, I'll assign appropriate classes based on the icon's importance—primary for main icons, neutral for supporting ones, and success for highlights.
 
-Fonts need to define the name based on type, which seems straightforward since Figma types are likely standard.
+Looking at the font size and line-height sections, Figma's values need to be converted into standard CSS units. For example, header 0 might correspond to 28px in text, so I'll use 'text-3xl' since it's a common breakpoint around that size.
 
-For padding and corner radius, using universal breakpoints like md:8, lg:12 makes sense. Bottom-sheet is already set in background.
+The padding section maps straightforwardly from Figma points to Prettier breakpoints like sm, lg, etc. So, each value will be replaced with the appropriate utility class.
 
-The width for bottom-sheet is 328px, so that stays as width-bottom-sheet.
+Corner radius is handled by converting the values into predefined classes such as 'sm', 'lg', etc., based on standard sizing.
 
-I think I've covered all the keys. Now, I'll structure this into a JSON file with appropriate sections and values.
+For width definitions, since it's specific to a bottom-sheet, I'll use the term 'bottom-sheet' in the corresponding breakpoints like xl and 2xl.
+
+I need to ensure that all custom properties are correctly mapped without any typos. Also, checking if any values might need adjustment for better readability or consistency across different screen sizes.
+
+Finally, after mapping each section, I'll compile them into a Themes.json structure, making sure the syntax is correct with proper commas and braces.
 </think>
 
 {
   "color": {
     "bg": {
-      "default": "${background.root}",
-      "neutral": "#f7f7fc",
-      "saturated": "#ebe6fa",
-      "error": "#fff4f2",
-      "success": "#f0fdef",
-      "pending": "#fff7f3",
-      "modal": "rgba(0, 0, 0, 0.9)",
-      "bottom-sheet": "#ffffff",
-      "dark-primary": "bg-neutral-800",
-      "primary": "#372f84",
-      "light-primary": "bg-neutral-[600]"
+      "default": "#ffffff",
+      "neutral": "#f7f7fc"
     },
-    "button": {
-      "primary": "#372f84",
-      "secondary": "#ebe6fa",
-      "neutral": "bg-neutral-[100]",
-      "disabled": "bg-disabled-[50]"
+    "primary": {
+      "default": "#372f84",
+      "neutral": "#413f50"
     },
-    "border": {
-      "low-contrast": "bg-neutral-[700]",
-      "medium-contrast": "bg-neutral-[600]",
-      "high-contrast": "#8c85d4",
-      "success": "bg-primary-[500]",
-      "pending": "bg-neutral-[400]",
-      "failure": "#ffb4aa"
+    "secondary": {
+      "default": "#ebe6fa"
     },
+    "neutral": {
+      "default": "#413f50"
+    },
+    "success": {
+      "default": "#00894f",
+      "neutral": "#12b76a"
+    },
+    "pending": {
+      "default": "#d27b34"
+    },
+    "error": {
+      "default": "#de372d"
+    },
+    "muted": {
+      "default": "#bcbac9"
+    },
+    "contrast": {
+      "default": "#ffffff",
+      "neutral": "#f1f5f9"
+    }
+  },
+  "button": {
+    "primary": {
+      "default": "#372f84",
+      "neutral": "#413f50"
+    },
+    "secondary": {
+      "default": "#ebe6fa"
+    },
+    "neutral": {
+      "default": "#ffffff"
+    },
+    "disabled": {
+      "default": "#dddde4"
+    }
+  },
+  "border": {
+    "low-contrast": {
+      "default": "{Standard Gaming Monitor.200}",
+      "neutral": "#eeeef1"
+    },
+    "medium-contrast": {
+      "default": "{Standard Gaming Monitor.200}",
+      "neutral": "#dddde4"
+    },
+    "high-contrast": {
+      "default": "{Standard Gaming Monitor.200}",
+      "neutral": "#8c85d4"
+    },
+    "success": {
+      "default": "#73fcab",
+      "neutral": "#12b76a"
+    },
+    "pending": {
+      "default": "{Standard Gaming Monitor.200}"
+    },
+    "failure": {
+      "default": "#ffb4aa"
+    }
+  },
+  "header": {
     "header": {
-      "neutral": "bg-neutral-[700]",
-      "primary": "#372f84"
+      "sm": "#413f50",
+      "md": "#ffffff"
+    }
+  },
+  "text": {
+    "primary": {
+      "default": "#372f84",
+      "neutral": "#413f50"
+    },
+    "neutral": {
+      "default": "#413f50"
+    },
+    "support": {
+      "default": "#84819c"
+    },
+    "success": {
+      "default": "#00894f",
+      "md": "#12b76a"
+    },
+    "pending": {
+      "default": "#d27b34"
+    },
+    "error": {
+      "default": "#de372d"
+    },
+    "muted": {
+      "default": "#bcbac9"
+    },
+    "contrast": {
+      "default": "#ffffff",
+      "md": "#f1f5f9"
+    }
+  },
+  "icon": {
+    "primary": {
+      "default": "#372f84",
+      "neutral": "#413f50"
+    },
+    "neutral": {
+      "default": "#413f50"
+    },
+    "contrast": {
+      "default": "#ffffff"
+    },
+    "success": {
+      "default": "#12b76a"
+    },
+    "pending": {
+      "default": "#f2954b"
+    },
+    "error": {
+      "default": "#ff5446"
     }
   },
   "font": {
-    "name": {
-      "header": "system-medium",
-      "body": "system-light"
+    "size": {
+      "header": {
+        "sm": 1,
+        "md": 0.7
+      },
+      "body": {
+        "sm": 0.35,
+        "md": 0.6
+      }
+    },
+    "line-height": {
+      "2xl": 4.8,
+      "xl": 3.8,
+      "l": 3.175,
+      "m": 2.75,
+      "s": 2.275,
+      "xs": 1.6
     }
   },
   "padding": {
-    "md:8": 16,
-    "lg:12": 24
+    "sm": 4,
+    "lg": 8,
+    "md": 10.3,
+    "xl": 16,
+    "2xl": 24
   },
-  "corner-radius": {
-    "md:8": 16,
-    "lg:12": 24,
-    "bottom-sheet-top": 4,
-    "bottom-sheet-bottom": 4
+  "corner radius": {
+    "sm": 4,
+    "lg": 8,
+    "md": 12,
+    "xl": 16,
+    "2xl": 24,
+    "bottom-sheet-top": 12,
+    "bottom-sheet-bottom": 12
   },
   "width": {
-    "bottom-sheet": 328
+    "bottom-sheet": {
+      "xl": 328,
+      "2xl": 400
+    }
   }
 }
+`
